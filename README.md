@@ -2,7 +2,7 @@
 This repository is my final project for CSCI-2270.
 
 This library is designed to calculate the most efficient delivery route.
-Initially this will be implemented by creating a csv file with the delivery points (nodes), the distances between them, and possibly more information such as the number of right and left turns needed to get to a node from each path.  The data will be loaded into a graph, and then the shortest path will be calculated from this.  To be clear, this is not a map with delivery points, it is a set of delivery points with a path from each delivery point multiple other points.
+Initially this will be implemented by creating a csv file with the delivery points (nodes), the distances between them, and possibly more information such as the number of right and left turns needed to traverse a path.  The data will be loaded into a graph, and then the shortest path will be calculated from this.  To be clear, this is not a map with delivery points, it is a set of delivery points with a path from each delivery point multiple other points.
 The following options will be available:
 
 1. Calculate the best delivery method.  This option requires a starting point, either "Default" or a delivery location of the users choosing.
