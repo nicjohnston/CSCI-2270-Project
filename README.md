@@ -1,5 +1,4 @@
 # CSCI-2270-Project
-# ===================
 This repository is my final project for CSCI-2270.
 
 This library is designed to calculate the most efficient delivery route.
