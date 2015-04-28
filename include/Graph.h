@@ -30,11 +30,11 @@ struct adjVertex{
 // The vertex struct holds the information about every delivery location.
 struct vertex {
 	string name;
-	bool visited;
+	bool visited = false;
 	int distance;
-	vertex *previous;
-
-	int district = -1; // This variable will most likely be unused because all the deliveries are connected to the starting node.
+	//vertex *previous;
+	//int ID;
+	int district = 1; // This variable will most likely be unused because all the deliveries are connected to the starting node.
 
 	vector <adjVertex> adj;
 };
@@ -92,6 +92,12 @@ class Graph {
 
 		void shortestDeliveryRoute(string startingCity);
 
+		void pathLength(string, string, int&, int&, int&);
+
+		void printCurrentRoute();
+		void printCurrentProgress();
+		void deliverPackage();
+
 	protected:
 	private:
 
@@ -101,7 +107,12 @@ class Graph {
 		vector <vertex> vertices;
 		ifstream fileData;
 
-		queue <routePath> currentRoute;
+		//queue <routePath> currentRoute;
+		vector <string> currentRoute;
+
+		int numDeliveries = 0;
+		int numCompleteDeliveries = 0;
+
 };
 
 #endif // GRAPH_H

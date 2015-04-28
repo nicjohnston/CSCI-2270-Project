@@ -4,27 +4,30 @@
 using namespace std;
 
 /*displays a menu with options to enqueue and dequeue a message and transmit the entire message and quit*/
-void displayMainMenu()
-{
+void displayMainMenu() {
     cout << "======Main Menu=====" << endl;
-    //cout << "1. Find a movie" << endl;
     cout << "1. Calculate Best Delivery Route" << endl;
     cout << "2. Deliver a Package" << endl;
-    cout << "3. Pickup a Package" << endl;
-    cout << "4. Recalculate the Delivery Route" << endl;
-    cout << "5. Print Current Delivery Progress" << endl;
-    cout << "6. Print Current Delivery Route" << endl;
-    cout << "7. Print All Deliviery Locations And The Routes Between Them." << endl;
-    cout << "8. Erase All Remaining Deliveries" << endl;
-    cout << "9. Load a New Set Of Deliveries" << endl;
-    cout << "10. Add a Single Delivery" << endl;
-    cout << "12. Quit" << endl;
+    cout << "3. Print Current Delivery Route" << endl;
+    cout << "4. Print Current Delivery Progress" << endl;
+    cout << "5. Print All Deliviery Locations And The Routes Between Them." << endl;
+    cout << "6. Erase All Remaining Deliveries" << endl;
+    cout << "7. Load a New Set Of Deliveries" << endl;
+    cout << "8. Add a Single Delivery" << endl;
+    cout << "9. Quit" << endl;
     return;
 }
 
-int main(int argc, char*argv[]) {
+int main(int argc, char *argv[]) {
     // Create a graph
-    Graph g;
+
+	Graph g;
+
+	//If a cmd line argument is provided, load the data from that filename.
+	if (argc > 1) {
+		const char filename = *argv[1];
+		g.loadDataFromFile(&filename, 1);
+	}
 
     // Flag used for exiting menu
     bool quit = false;
@@ -47,64 +50,50 @@ int main(int argc, char*argv[]) {
             // Calculate Best Delivery Route
             case 1:
             {
-
+				g.shortestDeliveryRoute("STARTING");
                 break;
 			}
             // Deliver a Package
             case 2:
             {
-
+                g.deliverPackage();
                 break;
 			}
-            // Pickup a Package
+            // Print Current Delivery Route
             case 3:
             {
-
+				g.printCurrentRoute();
                 break;
 			}
-            // Recalculate the Delivery Route
-            case 4:
-            {
-
-                break;
+			case 4:
+			{
+				g.printCurrentProgress();
+				break;
 			}
             // Print Current Delivery Progress
             case 5:
             {
-
+				g.printVertices();
                 break;
 			}
-            // Print Current Delivery Route
+            // Erase All Remaining Deliveries
             case 6:
             {
-
-				break;
-			}
-			case 7:
-			{
-				g.printVertices();
-				break;
-			}
-            // Erase All Remaining Deliveries
-            case 8:
-            {
 				g.clearGraph();
-
 				break;
 			}
             // Load a New Set Of Deliveries
-            case 9:
+            case 7:
             {
 				cout << "Enter a file name:" << endl;
                 getline(cin,inputString1);
                 cout << "If you want to overwrite type 1, to append type 0:" << endl;
                 getline(cin,inputString2);
                 g.loadDataFromFile(inputString1.c_str(), atoi(inputString2.c_str()));
-
 				break;
 			}
             // Add a Single Delivery
-            case 10:
+            case 8:
             {
 				cout << "Enter delivery location name:" << endl;
                 getline(cin,inputString1);
@@ -129,7 +118,7 @@ int main(int argc, char*argv[]) {
 				break;
 			}
             // Quit
-            case 11:
+            case 9:
             {
                 cout << "Goodbye!" << endl;
                 quit = true;

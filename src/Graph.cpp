@@ -17,59 +17,29 @@
 #define LEFT_TURN_RATIO			1
 #define RIGHT_TURN_RATIO		1
 
-//#define GRAB_0_AND_1
-//#define USE_VERBOSE_FIND_DISTRICTS
-
 using namespace std;
 
-/*Graph::Graph(const char fileName[]) {
-	fileData.open(fileName);
-	string line;
-	getline(fileData, line);
-	vector <string> Cities;
-	parseLine(line, Cities);
-	for (int i = 1; i < Cities.size(); i++) {
-		//cout << Cities[i] << ",";
-		addVertex(Cities[i]);
-	}
-
-	int startingColumn = 0;
-	vector <string> data;
-
-	while (getline(fileData, line)) {
-		parseLine(line, data);
-		//cout << endl << data[0] << ":	";
-		for (int i = startingColumn+1; i < Cities.size(); i++) {
-			int edgeVal = atoi(data[i].c_str());
-			if (edgeVal > 0) addEdge(data[0], Cities[i], edgeVal);
-			//cout << edgeVal << "	  ";
-		}
-		data.clear();
-		startingColumn++;
-	}
-	//cout << endl;
-}*/
+Graph::Graph(const char fileName[]) { loadDataFromFile(fileName, 1); }
 
 Graph::Graph() {}
 
 Graph::~Graph() {}
 
-void Graph::addEdge(string v1, string v2, int length, int rightTurns, int leftTurns) {
+int Graph::calculatePathWeight(int length, int rightTurns, int leftTurns) { return length*LENGTH_RATIO + rightTurns*RIGHT_TURN_RATIO + leftTurns*LEFT_TURN_RATIO; }
 
-	for(int i = 0; i < vertices.size(); i++){
-		if(vertices[i].name == v1){
-			for(int j = 0; j < vertices.size(); j++){
-				if(vertices[j].name == v2 && i != j){
-
-					adjVertex av;
-					av.v = &vertices[j];
-
+void Graph::addEdge(string v1, string v2, int length, int rightTurns, int leftTurns)
+{
+    for(int i = 0; i < vertices.size(); i++){
+        if(vertices[i].name == v1){
+            for(int j = 0; j < vertices.size(); j++){
+                if(vertices[j].name == v2 && i != j){
+                    adjVertex av;
+                    av.v = &vertices[j];
 					av.length = length;
 					av.rightTurns = rightTurns;
 					av.leftTurns = leftTurns;
 					av.weight = calculatePathWeight(length, rightTurns, leftTurns);
-
-					vertices[i].adj.push_back(av);
+                    vertices[i].adj.push_back(av);
 
 
 					//another vertex for edge in other direction
@@ -82,31 +52,29 @@ void Graph::addEdge(string v1, string v2, int length, int rightTurns, int leftTu
 					av2.weight = calculatePathWeight(length, leftTurns, rightTurns);
 
 					vertices[j].adj.push_back(av2);
-
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 }
 
-int Graph::calculatePathWeight(int length, int rightTurns, int leftTurns) {
-	return length*LENGTH_RATIO + rightTurns*RIGHT_TURN_RATIO + leftTurns*LEFT_TURN_RATIO;
-}
+void Graph::addVertex(string n)
+{
+    bool found = false;
+    for(int i = 0; i < vertices.size(); i++){
+        if(vertices[i].name == n){
+            found = true;
+            cout<<vertices[i].name<<" found."<<endl;
+        }
+    }
+    if(found == false){
+        vertex v;
+        v.name = n;
+        v.district = -1;
+        v.visited = false;
+        vertices.push_back(v);
 
-void Graph::addVertex(string n){
-	bool found = false;
-	for(int i = 0; i < vertices.size(); i++){
-		if(vertices[i].name == n){
-			found = true;
-			cout<<vertices[i].name<<" found."<<endl;
-		}
-	}
-	if(found == false){
-		vertex v;
-		v.name = n;
-		vertices.push_back(v);
-
-	}
+    }
 }
 
 void Graph::displayEdges(){
@@ -123,19 +91,15 @@ void Graph::displayEdges(){
 
 void Graph::printVertices(){
 	//loop through all vertices and adjacent vertices
-	for(int i = 0; i < vertices.size(); i++){
-//	cout << "L1: " << vertices.size() << endl;
+	for(int i = 0; i < vertices.size(); i++) {
 		cout << vertices[i].district << ":" << vertices[i].name << "-->";
 		for(int j = 0; j < vertices[i].adj.size(); j++) {
 				cout<<vertices[i].adj[j].v->name;
-		//cout << "L2" << endl;
 				if (j != vertices[i].adj.size()-1)
 					cout << "***";
 		}
 		cout<<endl;
 	}
-
-//  cout << "TEST" << endl;
 }
 
 void Graph::findDistricts() {
@@ -174,232 +138,6 @@ void Graph::findDistricts() {
 
 	}
 }
-
-void Graph::find_Shortest_Path(string starting, string ending) {
-	vertex* startingVertex = NULL;
-	vertex* endingVertex = NULL;
-
-	for(int i = 0; i < vertices.size(); i++){
-		vertices[i].visited = false;
-		if (vertices[i].name == starting)
-			startingVertex = &vertices[i];
-	}
-
-	for(int i = 0; i < vertices.size(); i++){
-		vertices[i].visited = false;
-		if (vertices[i].name == ending)
-			endingVertex = &vertices[i];
-	}
-
-	if (startingVertex == NULL || endingVertex == NULL) {
-        cout << "One or more cities doesn't exist" << endl;
-	} else if (startingVertex->district != endingVertex->district) {
-        cout << "No safe path between cities" << endl;
-	} else if (startingVertex->district == -1 || endingVertex->district == -1) {
-        cout << "Please identify the districts before checking distances" << endl;
-    } else {
-        vertex * S;
-        vertex * D;
-
-        vertex * minVertex = NULL;
-        vector<vertex *> solved;
-        vector <vertex *> path;
-
-        int minDistance = INT_MAX;
-
-        for (int i = 0; i < vertices.size(); i++) {
-            vertices[i].visited = false;
-            vertices[i].previous = NULL;
-            vertices[i].distance = INT_MAX;
-            if (vertices[i].name == starting) {
-                S = &vertices[i];
-            }
-            if (vertices[i].name == ending){
-                D = &vertices[i];
-            }
-        }
-        S->visited = true;
-        S->distance = 0;
-        D->visited = false;
-
-        /*
-        cout << "||||||||||||||||||||||||||||||||||||||||" << endl;
-        for (int i = 0; i < vertices.size(); i++) {
-            cout << vertices[i].name << ":" << vertices[i].distance << endl;
-        }
-        cout << "||||||||||||||||||||||||||||||||||||||||" << endl;
-        */
-
-        solved.push_back(S);
-
-        while (D->visited == false) {
-            minDistance = INT_MAX;
-            minVertex = NULL;
-            for (int i = 0; i < solved.size(); i++) {
-                for (int j = 0; j < solved[i]->adj.size(); j++) {
-                    if (solved[i]->adj[j].v->visited == false) {
-                        //int tempDistance = solved[i]->adj[j].weight + solved[i]->distance;
-                        int tempDistance = solved[i]->distance + 1;
-//                        cout << "TempDist: " << tempDistance << "\tpart1: " << solved[i]->adj[j].weight << "\tpart2: " << solved[i]->distance << endl;
-                        if (tempDistance < minDistance) {
-                            minDistance = tempDistance;
-                            minVertex = solved[i]->adj[j].v;
-                            minVertex->previous = solved[i];
-                        }
-                    }
-                }
-            }
-            minVertex->distance = minDistance;
-            minVertex->visited = true;
-            solved.push_back(minVertex);
-        }
-        //cout << "Shortest Path" << endl;
-
-        path.push_back(minVertex);
-
-        while (minVertex->previous != NULL) {
-            path.push_back(minVertex->previous);
-            //cout << minVertex->previous->name << " - ";
-            minVertex = minVertex->previous;
-        }
-
-        cout << minDistance;
-
-        //cout << path[path.size()-1]->name;
-
-        for (int i = path.size()-1; i >= 0; i--) {
-            cout << "," << path[i]->name;
-        }
-
-        cout << endl;
-
-        //cout << endl << "Minimum Distance: " << minDistance << endl;
-
-
-    }
-
-}
-
-void Graph::find_Shortest_Distance(string starting, string ending) {
-	vertex* startingVertex = NULL;
-	vertex* endingVertex = NULL;
-
-	for(int i = 0; i < vertices.size(); i++){
-		vertices[i].visited = false;
-		if (vertices[i].name == starting)
-			startingVertex = &vertices[i];
-	}
-
-	for(int i = 0; i < vertices.size(); i++){
-		vertices[i].visited = false;
-		if (vertices[i].name == ending)
-			endingVertex = &vertices[i];
-	}
-
-	if (startingVertex == NULL || endingVertex == NULL) {
-        cout << "One or more cities doesn't exist" << endl;
-	} else if (startingVertex->district != endingVertex->district) {
-        cout << "No safe path between cities" << endl;
-	} else if (startingVertex->district == -1 || endingVertex->district == -1) {
-        cout << "Please identify the districts before checking distances" << endl;
-    } else {
-        vertex * S;
-        vertex * D;
-
-        vertex * minVertex = NULL;
-        vector<vertex *> solved;
-        vector <vertex *> path;
-
-        int minDistance = INT_MAX;
-
-        for (int i = 0; i < vertices.size(); i++) {
-            vertices[i].visited = false;
-            vertices[i].previous = NULL;
-            vertices[i].distance = INT_MAX;
-            if (vertices[i].name == starting) {
-                S = &vertices[i];
-            }
-            if (vertices[i].name == ending){
-                D = &vertices[i];
-            }
-        }
-        S->visited = true;
-        S->distance = 0;
-        D->visited = false;
-
-        /*
-        cout << "||||||||||||||||||||||||||||||||||||||||" << endl;
-        for (int i = 0; i < vertices.size(); i++) {
-            cout << vertices[i].name << ":" << vertices[i].distance << endl;
-        }
-        cout << "||||||||||||||||||||||||||||||||||||||||" << endl;
-        */
-
-        solved.push_back(S);
-
-        while (D->visited == false) {
-            minDistance = INT_MAX;
-            minVertex = NULL;
-            for (int i = 0; i < solved.size(); i++) {
-                for (int j = 0; j < solved[i]->adj.size(); j++) {
-                    if (solved[i]->adj[j].v->visited == false) {
-                        int tempDistance = solved[i]->adj[j].weight + solved[i]->distance;
-                        //int tempDistance = solved[i]->distance + 1;
-//                        cout << "TempDist: " << tempDistance << "\tpart1: " << solved[i]->adj[j].weight << "\tpart2: " << solved[i]->distance << endl;
-                        if (tempDistance < minDistance) {
-                            minDistance = tempDistance;
-                            minVertex = solved[i]->adj[j].v;
-                            minVertex->previous = solved[i];
-                        }
-                    }
-                }
-            }
-            minVertex->distance = minDistance;
-            minVertex->visited = true;
-            solved.push_back(minVertex);
-        }
-        //cout << "Shortest Path" << endl;
-
-        path.push_back(minVertex);
-
-        while (minVertex->previous != NULL) {
-            path.push_back(minVertex->previous);
-            //cout << minVertex->previous->name << " - ";
-            minVertex = minVertex->previous;
-        }
-
-        cout << minDistance;
-
-        //cout << path[path.size()-1]->name;
-
-        for (int i = path.size()-1; i >= 0; i--) {
-            cout << "," << path[i]->name;
-        }
-
-        cout << endl;
-
-        //cout << endl << "Minimum Distance: " << minDistance << endl;
-
-
-    }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 vertex* Graph::BF_Search(string city, string startingCity) {
 
@@ -473,12 +211,6 @@ void Graph::BF_Traversal(string startingCity) {
 	}
 }
 
-
-
-
-
-
-
 vertex * Graph::findVertex(string name)
 {
     for(int i = 0; i < vertices.size(); i++)
@@ -488,11 +220,6 @@ vertex * Graph::findVertex(string name)
     }
     return NULL;
 }
-
-
-
-
-
 
 // This function loads data from a file.  It requires two arguments.
 // The filename is the file from which to load the data.
@@ -539,19 +266,16 @@ void Graph::loadDataFromFile(const char fileName[], int mode) {
 	}
 }
 
-
-
-
-
+// The clearGraph function is supposed to completly clear the graph.
+// It is currently not functioning properly.  It clears the graph, however inserting new data fails after clearing the graph.
 void Graph::clearGraph() {
+	for (int i = 0; i < vertices.size(); i++) {
+		vertices[i].adj.clear();
+	}
 	vertices.clear();
 }
 
-
-
-
-
-// Traveling Salesman
+// This is addapted from the assignment 8 solution.
 void Graph::shortestDeliveryRoute(string startingCity)
 {
     vertex * start = findVertex(startingCity);
@@ -563,7 +287,8 @@ void Graph::shortestDeliveryRoute(string startingCity)
     }
     if (start->district == -1)
     {
-        cout << "Please identify the districts before checking distances" << endl;
+        cout << "Identifying the districts." << endl;
+        findDistricts();
         //return;
     }
 
@@ -614,6 +339,9 @@ void Graph::shortestDeliveryRoute(string startingCity)
                     queueVertex temp;
                     temp.path = path;
                     temp.distance = distance;
+                    for (int i = 0; i < temp.path.size(); i++)
+						cout << temp.path[i]->name << "<-->";
+					cout << endl;
                     q.push(temp);
                 }
 
@@ -622,27 +350,109 @@ void Graph::shortestDeliveryRoute(string startingCity)
 
         }
     }
+
+    cout << endl << endl;
     if (!possibleSolutions.empty())
     {
         queueVertex solution = possibleSolutions.top();
         cout << solution.distance << endl;
         cout << solution.distance;
-        for (int j = 0; j < solution.path.size(); j++)
+        for (int j = 0; j < solution.path.size(); j++) {
             cout << "," << solution.path[j]->name;
+            // The following code was an attempt at using a vector of the routePath struct to store the length and number of turns for each delivery.
+//            routePath temp;
+//            temp.starting = solution.path[j]->name;
+//            temp.ending = solution.path[j+1]->name;
+//            pathLength(temp.starting, temp.ending, temp.length, temp.rightTurns, temp.leftTurns);
+//            cout << temp.starting << ":" << temp.ending << ":" << temp.length << ":" << temp.rightTurns << ":" << temp.leftTurns << endl;
+//            currentRoute.push(temp);
+            currentRoute.push_back(solution.path[j]->name);
+		}
         cout << endl;
-
+		numDeliveries = currentRoute.size()-2;
     }
     else
         cout << "No possible path." << endl;
     return;
 }
 
+// This function is adapted from my solution to recitation 11 part 5.
+// Although it is presently unused, it was originally intended to provide extra information about the path between each delivery.
+void Graph::pathLength(string vertex1, string vertex2, int &length, int &leftTurns, int &rightTurns) {
+
+    for (int i = 0; i < vertices.size(); i++) {
+        vertices[i].visited = false;
+    }
 
 
+    queue<vertex*> bfq;
+    vertex v;
+    int i = 0;
+    for(i=0; i<vertices.size();i++) {
+        if (vertex1 == vertices[i].name) {
+            v = vertices[i];
+            break;
+        }
+    }
+    //cout<<v.name<<endl;
+    vertices[i].visited = true;
+    bfq.push(&vertices[i]);
 
 
+    while (!bfq.empty()) {
+        v = *bfq.front();
+        bfq.pop();
+        for(i=0;i<v.adj.size();i++) {
+            if (v.adj[i].v->visited==false) {
+                v.adj[i].v->visited = true;
+                bfq.push(v.adj[i].v);
+                //cout<<v.adj[i].v->name<<endl;
+                if (vertex2 == v.adj[i].v->name) {
+                    //cout << vertex2 << ":" << v.adj[i].v->name << endl;
+                    length = v.adj[i].length;
+                    rightTurns = v.adj[i].rightTurns;
+                    leftTurns = v.adj[i].leftTurns;
+                }
+            }
+        }
+    }
+}
 
+void Graph::printCurrentRoute() {
+	if (numDeliveries != 0) {
+		for (int i = 0; i < currentRoute.size()-1; i++) {
+			if (i != 0) cout << "-->";
+			cout << currentRoute[i];
+		}
+		cout << endl;
+	} else {
+		cout << "There are no deliveries." << endl;
+	}
+}
 
+void Graph::deliverPackage() {
+	if (numCompleteDeliveries < numDeliveries && numDeliveries != 0) {
+		cout << "Delivered a package to " << currentRoute[numCompleteDeliveries+1] << endl;
+		numCompleteDeliveries++;
+		cout << numCompleteDeliveries << ":" << numDeliveries << endl;
+	} else {
+		cout << "All packages have been delivered." << endl;
+		currentRoute.clear();
+		numCompleteDeliveries = 0;
+		numDeliveries = 0;
+	}
+}
+
+void Graph::printCurrentProgress() {
+	if (numDeliveries != 0) {
+		float percent = ((float)numCompleteDeliveries/(float)numDeliveries)*100.0;
+		cout << numCompleteDeliveries << " out of " << numDeliveries << " delivered. ";
+		cout << percent;
+		cout << "% complete." << endl;
+	} else {
+		cout << "There are no deliveries." << endl;
+	}
+}
 
 void Graph::parseLine(string line, vector <string> &words, char delimiter) {
 	stringstream buffer(line);
