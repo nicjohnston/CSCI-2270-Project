@@ -35,6 +35,8 @@ int main(int argc, char *argv[]) {
     // Input strings and command value integer
     string inputString1;
     string inputString2;
+	string inputString3;
+	string inputString4;
     int input;
 
     while(quit != true)
@@ -99,9 +101,6 @@ int main(int argc, char *argv[]) {
                 getline(cin,inputString1);
                 cout << "How many paths to this location will you be entering? (Please enter an integer greater than or equal to 1):" << endl;
                 getline(cin,inputString2);
-
-                string inputString3;
-                string inputString4;
 
                 int numPaths = atoi(inputString2.c_str());
                 for (int i = 0; i < numPaths; i++) {

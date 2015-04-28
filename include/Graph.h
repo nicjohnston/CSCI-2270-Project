@@ -34,11 +34,12 @@ struct vertex {
 	int distance;
 	//vertex *previous;
 	//int ID;
-	int district = 1; // This variable will most likely be unused because all the deliveries are connected to the starting node.
+	int district;
 
 	vector <adjVertex> adj;
 };
 
+// This is not used
 struct routePath {
 	string starting;
 	string ending;
@@ -73,7 +74,6 @@ class Graph {
 		~Graph();
 		void addEdge(string v1, string v2, int length, int rightTurns, int leftTurns);
 		void addVertex(string name);
-		void displayEdges();
 
 		void printVertices();
 		void findDistricts();

@@ -27,8 +27,19 @@ Graph::~Graph() {}
 
 int Graph::calculatePathWeight(int length, int rightTurns, int leftTurns) { return length*LENGTH_RATIO + rightTurns*RIGHT_TURN_RATIO + leftTurns*LEFT_TURN_RATIO; }
 
+
+/*
+Function prototype:
 void Graph::addEdge(string v1, string v2, int length, int rightTurns, int leftTurns)
-{
+
+Function description:
+This method adds an edge into the graph by creating an adjacent vertex between
+
+
+Precondition: The rightTurns, leftTurns, and length variables muse be integers greater than or equal to 0. The variables v1 and v2 are the names of the two delivery locations that the link connects.
+Post condition: An adjVertex is created with the specified length and turn count. One version of this adjVertex is created from the vertex whose name is v1, to the vertex whose name is v2.  Another link is created in the other direction as well.
+*/
+void Graph::addEdge(string v1, string v2, int length, int rightTurns, int leftTurns) {
     for(int i = 0; i < vertices.size(); i++){
         if(vertices[i].name == v1){
             for(int j = 0; j < vertices.size(); j++){
@@ -58,8 +69,18 @@ void Graph::addEdge(string v1, string v2, int length, int rightTurns, int leftTu
     }
 }
 
+/*
+Function prototype:
 void Graph::addVertex(string n)
-{
+
+Function description:
+This method adds a vertex to the vertices array that represents a delivery location.
+
+
+Precondition: The string n is the name of the delivery location to be added.
+Post condition: A new vertex is in the vertices vector the represents the delivery location that was added.
+*/
+void Graph::addVertex(string n) {
     bool found = false;
     for(int i = 0; i < vertices.size(); i++){
         if(vertices[i].name == n){
@@ -77,18 +98,17 @@ void Graph::addVertex(string n)
     }
 }
 
-void Graph::displayEdges(){
-	//loop through all vertices and adjacent vertices
-	for(int i = 0; i < vertices.size(); i++){
-		cout<<vertices[i].name<<"-->";
-		for(int j = 0; j < vertices[i].adj.size(); j++){
-			cout<<vertices[i].adj[j].v->name<<"***";
-		}
-		cout<<endl;
-	}
+/*
+Function prototype:
+void Graph::printVertices()
 
-}
+Function description:
+This method displays the connections between all the delivery locations.
 
+
+Precondition: None.
+Post condition: The connections between the delivery locations have been written to the command line.
+*/
 void Graph::printVertices(){
 	//loop through all vertices and adjacent vertices
 	for(int i = 0; i < vertices.size(); i++) {
@@ -102,6 +122,16 @@ void Graph::printVertices(){
 	}
 }
 
+/*
+Function prototype:
+void Graph::findDistricts()
+
+Function description:
+This method assigns district id's to each delivery location.
+
+Precondition: None.
+Post condition: The district id's in the vertices vector have been updated to reflect the number of discrete graphs in the vector.
+*/
 void Graph::findDistricts() {
 	int num_district = 1;
 
@@ -139,6 +169,17 @@ void Graph::findDistricts() {
 	}
 }
 
+/*
+Function prototype:
+vertex* Graph::BF_Search(string city, string startingCity)
+
+Function description:
+This method searches the graph for a delivery location with a specified name starting a a specified node.
+
+
+Precondition: The city variable must be a string with the name of the delivery location to search for. The startingSicy variable must be a string with the name of the delivery location to start the breadth-first traversal from.
+Post condition: A pointer to the vertex that was found is returned. If a delivery location with the specified name is not found, a null pointer is returned.
+*/
 vertex* Graph::BF_Search(string city, string startingCity) {
 
 	vertex *searchResult = nullptr;
@@ -181,11 +222,33 @@ vertex* Graph::BF_Search(string city, string startingCity) {
 	return searchResult;
 }
 
+/*
+Function prototype:
+vertex* Graph::BF_Search(string city)
+
+Function description:
+This method is an overload of the BF_Search function that allows the user to call it without specifying a starting location.
+
+
+Precondition: The city variable must be a string with the name of the delivery location to search for.
+Post condition: A pointer to the vertex that was found is returned. If a delivery location with the specified name is not found, a null pointer is returned.
+*/
 vertex* Graph::BF_Search(string city) {
 	string start = vertices[0].name;
 	return this->BF_Search(city, start);
 }
 
+/*
+Function prototype:
+void Graph::BF_Traversal(string startingCity)
+
+Function description:
+This method traverses the delivery location graph from a starting location.  This method uses the breadth-first traversal algorithm.
+
+
+Precondition: The startingCity variable must be a string with the name of the delivery location to start from.
+Post condition: None
+*/
 void Graph::BF_Traversal(string startingCity) {
 	int i = 0;
 	queue<vertex *> Q;
@@ -221,11 +284,17 @@ vertex * Graph::findVertex(string name)
     return NULL;
 }
 
-// This function loads data from a file.  It requires two arguments.
-// The filename is the file from which to load the data.
-// The mode is an integer that determines whether the new data overwrites the existing data or the new data appends the data.
-// mode = 0 appends the new data.
-// mode = 1 deletes the existing data and then inserts the new data. (overwrite)
+/*
+Function prototype:
+void Graph::loadDataFromFile(const char fileName[], int mode)
+
+Function description:
+This method loads a set of deliveries from a file into the delivery locations graph.
+
+
+Precondition: The fileName variable must contain the name of the file from which to read the data. The mode variable is an integer whose values must be either 0 or 1.  mode = 0 appends the new data into the graph, mode = 1 overwrites the existing data with new data.
+Post condition: The vertices graph contains new delivery locations and connections between those locations.
+*/
 void Graph::loadDataFromFile(const char fileName[], int mode) {
 
 	if (mode == 1) {
@@ -275,6 +344,17 @@ void Graph::clearGraph() {
 	vertices.clear();
 }
 
+/*
+Function prototype:
+void Graph::shortestDeliveryRoute(string startingCity)
+
+Function description:
+This method determines the shortest delivery route and writes it to a vertex of strings.
+
+
+Precondition: The startingCity variable must be a string specifying where to start the deliveries from. It defaults to the node called STARTING
+Post condition: The currentRoute vertex contains the most efficient route to deliver the packages.
+*/
 // This is addapted from the assignment 8 solution.
 void Graph::shortestDeliveryRoute(string startingCity)
 {
