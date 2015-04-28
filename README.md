@@ -17,3 +17,11 @@ The following options will be available:
 8. Quit.
 
 This could be expanded to calculate the distances (and possibly the turns) by cross referencing the delivery locations with nodes in a graph that contains a map of the streets. This would be a very computationally expensive process if an exhaustive search algorithm was used.  One possible method is to calculate the shortest path between each delivery node on the map (possibly along with left and right turn numbers).  And then calculate the best delivery route from those, in a similar manner to the above system.  For clarity's sake, this uses two distinct data structures, a graph for the delivery nodes, another for the street map (most likely a vector.  This is more complex, as the delivery nodes must me correlated to the map nodes.  However this is also far more realistic.
+
+#Installation:
+1. Clone the repository.
+2. Open the .cbp file in Code Blocks.
+3. Build and run the project.
+
+There are two different methods availiable for loading delivery locations into the program.  The first is to call option 7 from the main menu of the program.  The second is to pass it a command line argument that is the name of the file from which to grab the data.
+A file is provided for testing called deliveries.txt.
