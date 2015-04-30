@@ -25,3 +25,9 @@ This could be expanded to calculate the distances (and possibly the turns) by cr
 
 There are two different methods availiable for loading delivery locations into the program.  The first is to call option 7 from the main menu of the program.  The second is to pass it a command line argument that is the name of the file from which to grab the data.
 A file is provided for testing called deliveries.txt.
+
+#System Requirements:
+This should be capable of operating on any OS with C++11 cabapilities, however I have only tested it in Ubuntu 14.04.
+
+#Group Members:
+Nicholas Johnston
