@@ -498,6 +498,7 @@ void Graph::pathLength(string vertex1, string vertex2, int &length, int &leftTur
     }
 }
 
+// This function prints all the locations inn the currentRoute variable, ignoring the first and last location as those will always be the starting location.
 void Graph::printCurrentRoute() {
 	if (numDeliveries != 0) {
 		for (int i = 0; i < currentRoute.size()-1; i++) {
@@ -510,6 +511,7 @@ void Graph::printCurrentRoute() {
 	}
 }
 
+// This function prints the location to which the next package is being delivered, and then increments the numCompleteDeliveries variable to record it.
 void Graph::deliverPackage() {
 	if (numCompleteDeliveries < numDeliveries && numDeliveries != 0) {
 		cout << "Delivered a package to " << currentRoute[numCompleteDeliveries+1] << endl;
@@ -523,6 +525,8 @@ void Graph::deliverPackage() {
 	}
 }
 
+// This function displays the current progress of the deliveries by comparing the nuumber of completed deliveries to the number of deliveries calculated by the shortestDeliveryFunction.
+// It outputs the progress as both a percentage and as the number of deliveries completed vs the total number of deliveries.
 void Graph::printCurrentProgress() {
 	if (numDeliveries != 0) {
 		float percent = ((float)numCompleteDeliveries/(float)numDeliveries)*100.0;
@@ -534,6 +538,8 @@ void Graph::printCurrentProgress() {
 	}
 }
 
+// This function is a helper function that parses a string into a vector of strings using the provided delimiter.
+// The delimiter defaults to ; for this project.  This can be changed in Graph.h in the method declaration.
 void Graph::parseLine(string line, vector <string> &words, char delimiter) {
 	stringstream buffer(line);
 	string word;
