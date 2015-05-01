@@ -539,7 +539,7 @@ void Graph::printCurrentProgress() {
 }
 
 // This function is a helper function that parses a string into a vector of strings using the provided delimiter.
-// The delimiter defaults to ; for this project.  This can be changed in Graph.h in the method declaration.
+// The delimiter defaults to ; for this project.  This can be changed by modifying the method declaration in Graph.h.
 void Graph::parseLine(string line, vector <string> &words, char delimiter) {
 	stringstream buffer(line);
 	string word;
